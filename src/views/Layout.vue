@@ -14,7 +14,7 @@
   >
     <h1 class="text-3xl">Chatroom</h1>
     <div v-if="view" class="flex items-center ml-60">
-      <img :src="`/src/assets/img/${gender}${numAvatar}.png`" alt="" />
+      <img :src="imgUrl" alt="avatar" />
       <div class="pl-1">{{ name }}</div>
     </div>
   </div>
@@ -24,7 +24,7 @@
 <script>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { numAvatar, gender, name } from '../compositionApi/role';
+import { name, imgUrl } from '../compositionApi/role';
 
 export default {
   setup() {
@@ -34,10 +34,9 @@ export default {
       view.value = route.path === '/chatroom';
     });
     return {
-      numAvatar,
-      gender,
       name,
       view,
+      imgUrl,
     };
   },
 };

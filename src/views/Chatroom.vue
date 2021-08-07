@@ -3,10 +3,7 @@
     <div class="bg-gray-700 p-10">
       <ul class="mb-3">
         <li v-for="item in data" :key="item[0]" class="flex items-center mb-3">
-          <img
-            :src="`/src/assets/img/${Object.values(item[1])[0].img}.png`"
-            alt=""
-          />
+          <img :src="Object.values(item[1])[0].img" alt="" />
           <div>{{ Object.keys(item[1]).join('') }}</div>
           ：
           <div>{{ Object.values(item[1])[0].content }}</div>
@@ -33,7 +30,7 @@ import axios from 'axios';
 import firebase from 'firebase';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { numAvatar, gender, name } from '../compositionApi/role';
+import { name, imgUrl } from '../compositionApi/role';
 
 export default {
   setup() {
@@ -54,7 +51,7 @@ export default {
     const addData = () => {
       const addMessage = {};
       addMessage[name.value] = {
-        img: `${gender.value}${numAvatar.value}`,
+        img: imgUrl.value,
         content: message.value,
       };
       axios
@@ -82,8 +79,6 @@ export default {
     });
 
     return {
-      numAvatar,
-      gender,
       name,
       data,
       addData,
