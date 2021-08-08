@@ -1,13 +1,60 @@
 <template>
-  <div class="flex justify-center items-center h-screen">
-    <div class="bg-gray-700 p-10 flex">
-      <div class="mr-6">
-        <h2 class="text-white text-center text-3xl font-black mb-1">Welcome</h2>
-        <p class="text-white text-center">匿名聊天室</p>
-        <img :src="imgUrl" alt="avatar" class="mx-auto" />
-        <div class="flex justify-evenly mb-5">
+  <div class="max-w-[850px] mx-auto sm:pt-[200px] pt-20">
+    <div
+      class="
+        grid grid-cols-12
+        bg-gray-700
+        lg:p-10
+        sm:p-5
+        px-3
+        pt-5
+        m-3
+        rounded-lg
+      "
+    >
+      <div class="sm:col-span-7 col-span-12 sm:mb-0 mb-10">
+        <h2 class="text-center text-white text-3xl font-black mb-3">
+          選擇頭像
+        </h2>
+        <div class="grid sm:grid-cols-9 grid-cols-10 gap-3">
+          <img
+            v-for="(item, index) in imgs"
+            :key="item"
+            :src="item"
+            :alt="gender"
+            class="
+              cursor-pointer
+              w-[120px]
+              h-[140px]
+              sm:col-span-3
+              col-span-5
+              mx-auto
+              hover:scale-110
+            "
+            @click="updateAvatar(index + 1)"
+          />
+        </div>
+      </div>
+      <div class="sm:col-span-5 col-span-12 sm:pb-0 pb-5">
+        <h2 class="text-white text-center text-3xl font-black mb-1">
+          基本資料
+        </h2>
+        <img
+          :src="imgUrl"
+          alt="avatar"
+          class="w-[150px] h-[180px] mx-auto mb-3"
+        />
+        <div class="flex justify-center mb-5">
           <button
-            class="bg-blue-700 hover:bg-blue-900 text-white rounded-lg p-2"
+            class="
+              bg-blue-700
+              hover:bg-blue-900
+              text-white
+              rounded-lg
+              active:ring-4
+              p-2
+              mr-20
+            "
             @click="updateGender('man')"
           >
             男性
@@ -19,28 +66,25 @@
             女性
           </button>
         </div>
-        <input
-          type="text"
-          placeholder="輸入暱稱"
-          class="rounded-l-lg p-2"
-          v-model="name"
-        />
-        <button
-          class="bg-gray-500 hover:bg-gray-800 text-white rounded-r-lg p-2"
-          @click="enterChatroom"
-        >
-          進入聊天室
-        </button>
-      </div>
-      <div class="flex flex-wrap gender">
-        <img
-          v-for="(item, index) in imgs"
-          :key="item"
-          :src="item"
-          :alt="gender"
-          class="gender ml-5 cursor-pointer"
-          @click="updateAvatar(index + 1)"
-        />
+        <div class="flex justify-center">
+          <input
+            type="text"
+            :placeholder="str"
+            class="rounded-l-lg p-2 lg:w-max sm:w-6/12 w-7/12"
+            v-model="name"
+          />
+          <button
+            class="bg-gray-500 text-white rounded-r-lg p-2"
+            :class="
+              inputName
+                ? ['disabled:opacity-50', 'cursor-not-allowed']
+                : 'hover:bg-gray-800'
+            "
+            @click="enterChatroom"
+          >
+            進入聊天室
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -49,13 +93,13 @@
 <script>
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import role, {
-  numAvatar, gender, name, imgUrl,
-} from '../compositionApi/role';
+import role, { gender, name, imgUrl } from '../compositionApi/role';
 
 export default {
   setup() {
     const imgs = ref([]);
+    const str = ref('請輸入暱稱');
+    const inputName = ref(true);
     const router = useRouter();
     const {
       updateAvatar, updateGender, getImg,
@@ -65,7 +109,7 @@ export default {
       if (name.value !== '') {
         router.push('/chatroom');
       } else {
-        alert('不得為空');
+        str.value = str.value === '請輸入暱稱' ? '尚未輸入暱稱' : '請輸入暱稱';
       }
     };
 
@@ -80,17 +124,21 @@ export default {
 
     watch(gender, () => getImgs());
 
+    watch(name, () => { inputName.value = name.value === ''; });
+
     onMounted(() => {
       getImg();
       getImgs();
+      name.value = '';
     });
 
     return {
-      numAvatar,
       gender,
       name,
+      inputName,
       imgUrl,
       imgs,
+      str,
       updateAvatar,
       updateGender,
       enterChatroom,
@@ -98,17 +146,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.gender {
-  width: 450px;
-  img {
-    width: 130px;
-    height: 150px;
-    &:hover {
-      transition: 0.5s;
-      transform: scale(1.1, 1.1);
-    }
-  }
-}
-</style>

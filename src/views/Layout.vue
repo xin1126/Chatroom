@@ -5,6 +5,7 @@
       items-center
       justify-center
       py-3
+      dark:bg-red-600
       bg-gray-700
       text-white
       font-black
@@ -12,9 +13,15 @@
       w-full
     "
   >
-    <h1 class="text-3xl">Chatroom</h1>
+    <button
+      class="bg-gray-500 hover:bg-gray-800 text-white rounded-lg p-2"
+      @click="switchColor"
+    >
+      切換
+    </button>
+    <h1 class="text-3xl">匿名聊天室</h1>
     <div v-if="view" class="flex items-center ml-60">
-      <img :src="imgUrl" alt="avatar" />
+      <img :src="imgUrl" alt="avatar" class="w-[40px] h-[50px]" />
       <div class="pl-1">{{ name }}</div>
     </div>
   </div>
@@ -30,21 +37,22 @@ export default {
   setup() {
     const route = useRoute();
     const view = ref(false);
+    const dom = document.body;
+
+    const switchColor = () => {
+      dom.classList.toggle('dark');
+    };
+
     watch(route, () => {
       view.value = route.path === '/chatroom';
     });
+
     return {
       name,
       view,
       imgUrl,
+      switchColor,
     };
   },
 };
 </script>
-
-<style scoped lang="scss">
-img {
-  width: 40px;
-  height: 50px;
-}
-</style>
