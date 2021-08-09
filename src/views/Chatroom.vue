@@ -1,10 +1,19 @@
 <template>
-  <div class="flex justify-center items-center flex-col pt-4 px-3">
+  <div
+    class="
+      flex
+      justify-center
+      items-center
+      flex-col
+      bg-gray-500
+      dark:bg-gray-200
+      p-3
+    "
+  >
     <div
+      ref="scroll"
       class="
-        style-3
-        max-w-[500px]
-        sm:max-h-[750px]
+        max-w-[500px] max-h-[750px]
         scroll
         overflow-y-auto overflow-x-hidden
         w-full
@@ -14,6 +23,7 @@
         p-4
       "
       :class="checked ? ['scroll-track', 'scroll-thumb'] : 'scroll'"
+      :style="{ height: `${height - 160}px` }"
     >
       <ul class="message">
         <template v-for="item in data" :key="item[0]">
@@ -48,7 +58,7 @@
                   rounded-lg
                 "
               >
-                <div class="message-left"></div>
+                <i class="fas fa-2x fa-caret-left absolute text-gray-500"></i>
                 {{ Object.values(item[1])[0].content }}
               </div>
             </div>
@@ -69,7 +79,6 @@
               class="
                 inline-block
                 relative
-                message-right
                 bg-blue-900
                 text-white text-lg
                 px-3
@@ -78,6 +87,7 @@
                 rounded-lg
               "
             >
+              <i class="fas fa-2x fa-caret-right absolute text-blue-900"></i>
               {{ Object.values(item[1])[0].content }}
             </div>
             <input
@@ -172,8 +182,7 @@
         bg-gray-800
         dark:bg-gray-300
         dark:shadow-lg
-        py-5
-        mb-3
+        p-5
         rounded-b-lg
       "
     >
@@ -181,7 +190,7 @@
         type="text"
         :placeholder="str"
         v-model="message"
-        class="rounded-l-lg p-2"
+        class="rounded-l-lg p-2 w-full"
       />
       <button
         @click="addData"
@@ -195,7 +204,7 @@
 
 <script>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   name, imgUrl, firebaseInit, checked,
@@ -207,6 +216,8 @@ export default {
     const message = ref('');
     const editInput = ref('');
     const editMessage = ref('');
+    const height = ref('');
+    const scroll = ref('');
     const str = ref('請輸入留言');
     const verify = ref(false);
     const router = useRouter();
@@ -232,11 +243,11 @@ export default {
           date: new Date().getTime(),
           edit: false,
         };
+        message.value = '';
         axios
           .post(url, addMessage)
           .then((res) => {
             data.value = Object.entries(res.data.result);
-            message.value = '';
             const content = [...data.value].pop()[0];
             tempId.value.push(content);
             localStorage.setItem(name.value, JSON.stringify(tempId.value));
@@ -284,8 +295,15 @@ export default {
         });
     };
 
+    watch(data, () => {
+      setTimeout(() => {
+        scroll.value.scrollTop = scroll.value?.scrollHeight + 1000;
+      }, 500);
+    });
+
     onMounted(() => {
       if (name.value) {
+        height.value = window.screen.height;
         setTimeout(() => {
           const db = firebaseInit.database();
           db.ref().on('value', () => {
@@ -301,6 +319,7 @@ export default {
       name,
       data,
       str,
+      height,
       addData,
       message,
       tempId,
@@ -310,26 +329,21 @@ export default {
       removeMessage,
       verify,
       checked,
+      scroll,
     };
   },
 };
 </script>
 
-<style scoped lang="scss">
-.message-left::before {
-  content: '⮜';
-  position: absolute;
-  color: #6b7280;
+<style lang="scss">
+.fa-caret-left {
+  left: -8px;
   top: 0;
-  left: -9px;
 }
 
-.message-right::after {
-  content: '⮞';
-  position: absolute;
-  color: #1e3a8a;
+.fa-caret-right {
+  right: -10px;
   top: 0;
-  right: -9px;
 }
 
 .scroll::-webkit-scrollbar-track {

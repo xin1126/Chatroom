@@ -1,5 +1,14 @@
 <template>
-  <div class="max-w-[850px] mx-auto sm:pt-[200px] pt-20">
+  <div
+    class="
+      max-w-[850px]
+      mx-auto
+      sm:pt-[150px]
+      bg-gray-500
+      dark:bg-gray-200
+      py-3
+    "
+  >
     <div
       class="
         grid grid-cols-12
@@ -10,7 +19,7 @@
         sm:p-5
         px-3
         pt-5
-        m-3
+        mx-3
         rounded-lg
       "
     >
@@ -19,7 +28,8 @@
           class="
             text-center text-white
             dark:text-gray-500
-            text-3xl
+            sm:text-3xl
+            text-2xl
             font-black
             mb-3
           "
@@ -50,7 +60,9 @@
           class="
             text-white
             dark:text-gray-500
-            text-center text-3xl
+            text-center
+            sm:text-3xl
+            text-2xl
             font-black
             mb-1
           "

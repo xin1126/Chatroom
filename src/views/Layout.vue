@@ -1,6 +1,15 @@
 <template>
   <div
-    class="bg-gray-500 dark:bg-gray-100 w-screen h-screen absolute z-bg"
+    class="
+      bg-gray-500
+      dark:bg-gray-100
+      w-screen
+      md:h-screen
+      h-[972px]
+      absolute
+      bottom-0
+      z-bg
+    "
   ></div>
   <div
     class="
@@ -50,7 +59,9 @@
           ></div>
         </div>
       </label>
-      <h1 class="sm:text-3xl text-2xl dark:text-gray-500">匿名聊天室</h1>
+      <h1 class="sm:text-3xl text-2xl dark:text-gray-500 md:mr-0 mr-10">
+        匿名聊天室
+      </h1>
       <div v-if="view" class="flex items-center">
         <img :src="imgUrl" alt="avatar" class="w-[30px] h-[40px]" />
         <div class="pl-1 dark:text-gray-500">{{ name }}</div>
