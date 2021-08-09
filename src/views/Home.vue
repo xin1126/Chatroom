@@ -4,6 +4,8 @@
       class="
         grid grid-cols-12
         bg-gray-700
+        dark:bg-white
+        dark:shadow-md
         lg:p-10
         sm:p-5
         px-3
@@ -13,7 +15,15 @@
       "
     >
       <div class="sm:col-span-7 col-span-12 sm:mb-0 mb-10">
-        <h2 class="text-center text-white text-3xl font-black mb-3">
+        <h2
+          class="
+            text-center text-white
+            dark:text-gray-500
+            text-3xl
+            font-black
+            mb-3
+          "
+        >
           選擇頭像
         </h2>
         <div class="grid sm:grid-cols-9 grid-cols-10 gap-3">
@@ -36,7 +46,15 @@
         </div>
       </div>
       <div class="sm:col-span-5 col-span-12 sm:pb-0 pb-5">
-        <h2 class="text-white text-center text-3xl font-black mb-1">
+        <h2
+          class="
+            text-white
+            dark:text-gray-500
+            text-center text-3xl
+            font-black
+            mb-1
+          "
+        >
           基本資料
         </h2>
         <img
@@ -70,7 +88,14 @@
           <input
             type="text"
             :placeholder="str"
-            class="rounded-l-lg p-2 lg:w-max sm:w-6/12 w-7/12"
+            class="
+              rounded-l-lg
+              p-2
+              lg:w-max
+              sm:w-6/12
+              w-7/12
+              dark:border-2 dark:border-r-0 dark:border-gray-500
+            "
             v-model="name"
           />
           <button

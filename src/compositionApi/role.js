@@ -1,10 +1,17 @@
 import { ref } from 'vue';
+import firebase from 'firebase';
 
 export const gender = ref('man');
 
 export const name = ref('');
 
 export const imgUrl = ref('');
+
+export const checked = ref('');
+
+export const firebaseInit = firebase.initializeApp({
+  databaseURL: 'https://crud-89cd3-default-rtdb.firebaseio.com',
+});
 
 export default () => {
   let numAvatar = 1;

@@ -1,28 +1,61 @@
 <template>
   <div
+    class="bg-gray-500 dark:bg-gray-100 w-screen h-screen absolute z-bg"
+  ></div>
+  <div
     class="
-      flex
-      items-center
-      justify-center
+      w-full
       py-3
-      dark:bg-red-600
+      dark:bg-white
+      dark:shadow-md
       bg-gray-700
       text-white
       font-black
-      absolute
-      w-full
     "
   >
-    <button
-      class="bg-gray-500 hover:bg-gray-800 text-white rounded-lg p-2"
-      @click="switchColor"
+    <div
+      class="max-w-[850px] md:mx-auto flex items-center justify-between mx-3"
     >
-      切換
-    </button>
-    <h1 class="text-3xl">匿名聊天室</h1>
-    <div v-if="view" class="flex items-center ml-60">
-      <img :src="imgUrl" alt="avatar" class="w-[40px] h-[50px]" />
-      <div class="pl-1">{{ name }}</div>
+      <label for="toggleB" class="flex items-center cursor-pointer">
+        <div class="relative">
+          <input
+            type="checkbox"
+            id="toggleB"
+            class="sr-only"
+            v-model="checked"
+          />
+          <div
+            class="
+              block
+              bg-gray-600
+              dark:bg-gray-100
+              dark:shadow-inner
+              w-14
+              h-8
+              rounded-full
+            "
+          ></div>
+          <div
+            class="
+              dot
+              absolute
+              left-1
+              top-1
+              bg-gray-800
+              w-6
+              h-6
+              rounded-full
+              transition
+            "
+          ></div>
+        </div>
+      </label>
+      <h1 class="sm:text-3xl text-2xl dark:text-gray-500">匿名聊天室</h1>
+      <div v-if="view" class="flex items-center">
+        <img :src="imgUrl" alt="avatar" class="w-[30px] h-[40px]" />
+        <div class="pl-1 dark:text-gray-500">{{ name }}</div>
+      </div>
+      <div v-else class="text-gray-700 dark:text-white">1</div>
     </div>
   </div>
   <RouterView />
@@ -31,7 +64,7 @@
 <script>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { name, imgUrl } from '../compositionApi/role';
+import { name, imgUrl, checked } from '../compositionApi/role';
 
 export default {
   setup() {
@@ -39,20 +72,29 @@ export default {
     const view = ref(false);
     const dom = document.body;
 
-    const switchColor = () => {
-      dom.classList.toggle('dark');
-    };
-
     watch(route, () => {
       view.value = route.path === '/chatroom';
     });
+
+    watch(checked, () => dom.classList.toggle('dark'));
 
     return {
       name,
       view,
       imgUrl,
-      switchColor,
+      checked,
     };
   },
 };
 </script>
+
+<style scoped lang="scss">
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #6b7280;
+}
+
+.z-bg {
+  z-index: -1;
+}
+</style>

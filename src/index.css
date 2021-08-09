@@ -6,9 +6,6 @@
   * {
     @apply duration-500
   }
-  body {
-    @apply bg-gray-500;
-  }
   img {
     @apply block max-w-full max-h-full object-cover h-auto;
   }
