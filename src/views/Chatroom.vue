@@ -93,7 +93,13 @@
             <input
               v-else
               type="text"
-              class="mb-2 py-1 pl-2 rounded-lg"
+              class="
+                mb-2
+                py-1
+                pl-2
+                rounded-lg
+                dark:border-2 dark:border-gray-500
+              "
               v-model="editMessage"
             />
             <div
@@ -194,10 +200,18 @@
       />
       <button
         @click="addData"
-        class="bg-gray-500 hover:bg-gray-800 text-white rounded-r-lg px-3 py-1"
+        class="bg-gray-500 hover:bg-gray-700 text-white rounded-r-lg px-3 py-1"
       >
         <i class="far fa-paper-plane text-xl"></i>
       </button>
+    </div>
+  </div>
+  <div
+    class="absolute w-full h-full top-0 left-0 flex justify-center items-center"
+    v-if="isLoading"
+  >
+    <div class="fa-5x">
+      <i class="fas fa-spinner fa-spin"></i>
     </div>
   </div>
 </template>
@@ -220,6 +234,7 @@ export default {
     const scroll = ref('');
     const str = ref('請輸入留言');
     const verify = ref(false);
+    const isLoading = ref(true);
     const router = useRouter();
     const url = 'https://xin-api.herokuapp.com/crud-api/';
     const tempId = ref(JSON.parse(localStorage.getItem(name.value)) || []);
@@ -296,6 +311,7 @@ export default {
     };
 
     watch(data, () => {
+      isLoading.value = false;
       setTimeout(() => {
         scroll.value.scrollTop = scroll.value?.scrollHeight + 1000;
       }, 500);
@@ -303,13 +319,12 @@ export default {
 
     onMounted(() => {
       if (name.value) {
+        getData();
         height.value = window.screen.height;
-        setTimeout(() => {
-          const db = firebaseInit.database();
-          db.ref().on('value', () => {
-            getData();
-          });
-        }, 0);
+        const db = firebaseInit.database();
+        db.ref().on('value', () => {
+          getData();
+        });
       } else {
         router.push('/');
       }
@@ -330,6 +345,7 @@ export default {
       verify,
       checked,
       scroll,
+      isLoading,
     };
   },
 };

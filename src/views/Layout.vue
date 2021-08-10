@@ -2,7 +2,7 @@
   <div
     class="
       bg-gray-500
-      dark:bg-gray-100
+      dark:bg-gray-200
       w-screen
       md:h-screen
       h-[972px]
@@ -20,6 +20,7 @@
       bg-gray-700
       text-white
       font-black
+      mb-2
     "
   >
     <div
@@ -59,7 +60,10 @@
           ></div>
         </div>
       </label>
-      <h1 class="sm:text-3xl text-2xl dark:text-gray-500 md:mr-0 mr-10">
+      <h1
+        class="sm:text-3xl text-2xl dark:text-gray-500 md:mr-0"
+        :class="view ? 'mr-0' : 'mr-10'"
+      >
         匿名聊天室
       </h1>
       <div v-if="view" class="flex items-center">
