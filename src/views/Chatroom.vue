@@ -325,6 +325,11 @@ export default {
         db.ref().on('value', () => {
           getData();
         });
+        window.addEventListener('keydown', (e) => {
+          if (e.keyCode === 13) {
+            addData();
+          }
+        });
       } else {
         router.push('/');
       }

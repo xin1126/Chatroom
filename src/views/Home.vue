@@ -167,6 +167,11 @@ export default {
       getImg();
       getImgs();
       name.value = '';
+      window.addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) {
+          enterChatroom();
+        }
+      });
     });
 
     return {
