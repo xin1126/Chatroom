@@ -3,7 +3,7 @@
     class="
       bg-gray-500
       dark:bg-gray-200
-      w-screen
+      w-full
       md:h-screen
       h-[972px]
       absolute

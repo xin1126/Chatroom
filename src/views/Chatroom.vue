@@ -23,7 +23,7 @@
         p-4
       "
       :class="checked ? ['scroll-track', 'scroll-thumb'] : 'scroll'"
-      :style="{ height: `${height - 160}px` }"
+      :style="{ height: `${height - 180}px` }"
     >
       <ul class="message">
         <template v-for="item in data" :key="item[0]">
@@ -196,6 +196,7 @@
         type="text"
         :placeholder="str"
         v-model="message"
+        @keydown.enter="addData()"
         class="rounded-l-lg p-2 w-full"
       />
       <button
@@ -206,22 +207,13 @@
       </button>
     </div>
   </div>
-  <div
-    class="absolute w-full h-full top-0 left-0 flex justify-center items-center"
-    v-if="isLoading"
-  >
-    <div class="fa-5x">
-      <i class="fas fa-spinner fa-spin"></i>
-    </div>
-  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import {
-  name, imgUrl, firebaseInit, checked,
+  name, imgUrl, checked, chatroomRef,
 } from '../compositionApi/role';
 
 export default {
@@ -234,20 +226,8 @@ export default {
     const scroll = ref('');
     const str = ref('請輸入留言');
     const verify = ref(false);
-    const isLoading = ref(true);
     const router = useRouter();
-    const url = 'https://xin-api.herokuapp.com/crud-api/';
     const tempId = ref(JSON.parse(localStorage.getItem(name.value)) || []);
-
-    const getData = () => {
-      axios
-        .get(url)
-        .then((res) => {
-          if (res.data.result !== null) {
-            data.value = Object.entries(res.data.result);
-          }
-        });
-    };
 
     const addData = () => {
       if (message.value !== '') {
@@ -259,14 +239,10 @@ export default {
           edit: false,
         };
         message.value = '';
-        axios
-          .post(url, addMessage)
-          .then((res) => {
-            data.value = Object.entries(res.data.result);
-            const content = [...data.value].pop()[0];
-            tempId.value.push(content);
-            localStorage.setItem(name.value, JSON.stringify(tempId.value));
-          });
+        chatroomRef.push().set(addMessage);
+        const content = [...data.value].pop()[0];
+        tempId.value.push(content);
+        localStorage.setItem(name.value, JSON.stringify(tempId.value));
       } else {
         str.value = str.value === '請輸入留言' ? '尚未輸入留言' : '請輸入留言';
       }
@@ -287,14 +263,9 @@ export default {
           date: new Date().getTime(),
           edit: true,
         };
-        axios
-          .put(`${url}${id}`, newData)
-          .then((res) => {
-            data.value = Object.entries(res.data.result);
-            editInput.value = '';
-            editMessage.value = '';
-            verify.value = false;
-          });
+        chatroomRef.child(id).set(newData);
+        editInput.value = '';
+        editMessage.value = '';
       }
     };
 
@@ -303,32 +274,20 @@ export default {
       newData[name.value] = {
         content: '',
       };
-      axios
-        .put(`${url}${id}`, newData)
-        .then((res) => {
-          data.value = Object.entries(res.data.result);
-        });
+      chatroomRef.child(id).set(newData);
     };
 
     watch(data, () => {
-      isLoading.value = false;
       setTimeout(() => {
-        scroll.value.scrollTop = scroll.value?.scrollHeight + 1000;
-      }, 500);
+        scroll.value.scrollTop = scroll.value?.scrollHeight + 2000;
+      }, 200);
     });
 
     onMounted(() => {
       if (name.value) {
-        getData();
-        height.value = window.screen.height;
-        const db = firebaseInit.database();
-        db.ref().on('value', () => {
-          getData();
-        });
-        window.addEventListener('keydown', (e) => {
-          if (e.keyCode === 13) {
-            addData();
-          }
+        height.value = (window.innerHeight);
+        chatroomRef.on('value', (snapshot) => {
+          data.value = Object.entries(snapshot.val());
         });
       } else {
         router.push('/');
@@ -350,7 +309,6 @@ export default {
       verify,
       checked,
       scroll,
-      isLoading,
     };
   },
 };
