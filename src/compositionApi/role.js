@@ -13,9 +13,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-const database = firebase.database();
-
-export const chatroomRef = database.ref();
+export const database = firebase.database();
 
 export const gender = ref('man');
 
