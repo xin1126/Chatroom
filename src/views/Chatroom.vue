@@ -14,7 +14,7 @@
       :style="{ height: `${height - 100}px` }"
     >
       <p class="text-center mt-3 text-white dark:text-gray-600">
-        線上人數：{{ onLine.length }}
+        線上人數：{{ Object.values(onLine).length }}
       </p>
       <ul class="pl-3">
         <li
@@ -74,7 +74,7 @@
           "
         >
           <p class="text-white dark:text-gray-600">
-            線上人數：{{ onLine.length }}
+            線上人數：{{ Object.values(onLine).length }}
           </p>
           <!-- <button
             class="
@@ -170,6 +170,9 @@
                   dark:border-2 dark:border-gray-500
                 "
                 v-model="editMessage"
+                @keydown.enter="
+                  editData(item[0], Object.values(item[1])[0].content, false)
+                "
               />
               <div
                 class="text-sm text-red-500 mb-2"
@@ -239,6 +242,30 @@
                   確認
                 </button>
               </div>
+            </li>
+            <li
+              v-else-if="
+                Object.values(item[1])[0].content === '' &&
+                Object.values(item[1])[0].status
+              "
+              class="text-center mb-6"
+            >
+              <span
+                class="bg-gray-400 px-2 py-1 text-sm text-gray-100 rounded-lg"
+                >{{ Object.keys(item[1]).join('') }}加入聊天室</span
+              >
+            </li>
+            <li
+              v-else-if="
+                Object.values(item[1])[0].content === '' &&
+                Object.values(item[1])[0].status === false
+              "
+              class="text-center mb-6"
+            >
+              <span
+                class="bg-gray-400 px-2 py-1 text-sm text-gray-100 rounded-lg"
+                >{{ Object.keys(item[1]).join('') }}離開聊天室</span
+              >
             </li>
             <li v-else class="text-center mb-6">
               <span
@@ -362,19 +389,24 @@ export default {
     watch(data, () => {
       setTimeout(() => {
         scroll.value.scrollTop = scroll.value?.scrollHeight + 2000;
-      }, 450);
+      }, 500);
     });
 
     onMounted(() => {
       if (name.value) {
         height.value = (window.innerHeight);
         const onLineData = {};
+        const enterChatroom = {};
         onLineData[name.value] = imgUrl.value;
+        enterChatroom[name.value] = { content: '', status: true };
+        database.ref('chatroom').push().set(enterChatroom);
         database.ref('onLine').push().set(onLineData);
-        ws = new WebSocket('ws://fierce-savannah-16080.herokuapp.com/');
+        ws = new WebSocket('wss://fierce-savannah-16080.herokuapp.com/');
         database.ref().on('value', (snapshot) => {
           data.value = Object.entries(snapshot.val().chatroom);
-          onLine.value = Object.entries(snapshot.val().onLine).map((item) => item[1]);
+          if (snapshot.val().onLine) {
+            onLine.value = Object.entries(snapshot.val().onLine).map((item) => item[1]) || {};
+          }
         });
       } else {
         router.push('/');
