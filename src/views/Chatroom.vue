@@ -42,9 +42,75 @@
         flex-col
         bg-gray-500
         dark:bg-gray-200
+        relative
         p-3
       "
     >
+      <div
+        class="
+          md:hidden
+          w-full
+          sm:w-[500px]
+          flex
+          justify-between
+          bg-gray-800
+          dark:bg-gray-300
+          rounded-t-lg
+          px-3
+          py-2
+        "
+      >
+        <p class="text-white dark:text-gray-600">
+          線上人數：{{ Object.values(onLine).length }}
+        </p>
+        <button
+          type="button"
+          class="
+            bg-gray-500
+            hover:bg-gray-600
+            text-white text-sm
+            flex
+            rounded-lg
+            px-2
+            py-1
+          "
+          @click="onLineHeight = !onLineHeight"
+        >
+          查看線上用戶
+        </button>
+        <div
+          class="
+            absolute
+            right-6
+            top-16
+            bg-gray-500
+            rounded-lg
+            z-10
+            overflow-hidden
+          "
+          :class="{ 'h-0': onLineHeight }"
+        >
+          <ul class="pl-3 pt-2">
+            <li
+              class="flex items-center mb-2 text-white dark:text-gray-600"
+              v-for="item in onLine"
+              :key="item"
+            >
+              <img
+                class="w-[30px] h-[40px] mr-1"
+                :src="Object.values(item).join('')"
+                alt=""
+              />
+              <p class="pr-2">
+                {{ Object.keys(item).join('') }}
+              </p>
+              <div
+                class="w-[12px] h-[12px] bg-green-500 rounded-full mr-3 ml-auto"
+              ></div>
+            </li>
+          </ul>
+        </div>
+      </div>
       <div
         ref="scroll"
         class="
@@ -55,40 +121,11 @@
           overflow-y-auto overflow-x-hidden
           bg-gray-700
           dark:bg-white
-          rounded-t-lg
+          md:rounded-t-lg
           p-4
         "
         :class="checked ? ['scroll-track', 'scroll-thumb'] : 'scroll'"
       >
-        <div
-          class="
-            md:hidden
-            onLine
-            flex
-            justify-between
-            bg-gray-800
-            dark:bg-gray-300
-            px-3
-            py-2
-          "
-        >
-          <p class="text-white dark:text-gray-600">
-            線上人數：{{ Object.values(onLine).length }}
-          </p>
-          <!-- <button
-            class="
-              bg-gray-500
-              hover:bg-gray-600
-              text-white text-sm
-              flex
-              rounded-lg
-              px-2
-              py-1
-            "
-          >
-            查看線上用戶
-          </button> -->
-        </div>
         <ul class="message">
           <template v-for="item in data" :key="item[0]">
             <li
@@ -332,6 +369,7 @@ export default {
     const scroll = ref('');
     const str = ref('請輸入留言');
     const verify = ref(false);
+    const onLineHeight = ref(true);
     const router = useRouter();
     const tempId = ref(JSON.parse(localStorage.getItem(name.value)) || []);
     let ws;
@@ -429,6 +467,7 @@ export default {
       verify,
       checked,
       scroll,
+      onLineHeight,
     };
   },
 };
@@ -476,7 +515,10 @@ export default {
 }
 
 .h-chatroom {
-  height: calc(100vh - 180px);
+  height: calc(100vh - 224px);
+  @media (min-width: 768px) {
+    height: calc(100vh - 180px);
+  }
 }
 
 .h-onLine {
