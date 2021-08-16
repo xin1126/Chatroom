@@ -1,18 +1,6 @@
 <template>
   <div
     class="
-      bg-gray-500
-      dark:bg-gray-200
-      w-full
-      md:h-screen
-      h-[972px]
-      absolute
-      bottom-0
-      z-bg
-    "
-  ></div>
-  <div
-    class="
       w-full
       py-3
       dark:bg-white
@@ -85,13 +73,15 @@ export default {
   setup() {
     const route = useRoute();
     const view = ref(false);
-    const dom = document.body;
 
     watch(route, () => {
       view.value = route.path === '/chatroom';
     });
 
-    watch(checked, () => dom.classList.toggle('dark'));
+    watch(checked, () => {
+      document.body.classList.toggle('dark');
+      document.body.style.backgroundColor = checked.value ? '#E5E7EB' : '#6b7280';
+    });
 
     return {
       name,
@@ -103,7 +93,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+body {
+  background-color: #6b7280;
+}
+
 input:checked ~ .dot {
   transform: translateX(100%);
   background-color: #6b7280;

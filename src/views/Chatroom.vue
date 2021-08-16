@@ -3,6 +3,7 @@
     <div
       class="
         w-[180px]
+        h-onLine
         mt-3
         bg-gray-700
         dark:bg-white
@@ -11,7 +12,6 @@
         hidden
         md:block
       "
-      :style="{ height: `${height - 100}px` }"
     >
       <p class="text-center mt-3 text-white dark:text-gray-600">
         線上人數：{{ Object.values(onLine).length }}
@@ -50,7 +50,7 @@
         class="
           w-full
           sm:w-[500px]
-          max-h-[750px]
+          h-chatroom
           scroll
           overflow-y-auto overflow-x-hidden
           bg-gray-700
@@ -59,7 +59,6 @@
           p-4
         "
         :class="checked ? ['scroll-track', 'scroll-thumb'] : 'scroll'"
-        :style="{ height: `${height - 180}px` }"
       >
         <div
           class="
@@ -330,7 +329,6 @@ export default {
     const message = ref('');
     const editInput = ref('');
     const editMessage = ref('');
-    const height = ref('');
     const scroll = ref('');
     const str = ref('請輸入留言');
     const verify = ref(false);
@@ -394,7 +392,6 @@ export default {
 
     onMounted(() => {
       if (name.value) {
-        height.value = (window.innerHeight);
         const onLineData = {};
         const enterChatroom = {};
         onLineData[name.value] = imgUrl.value;
@@ -422,7 +419,6 @@ export default {
       data,
       onLine,
       str,
-      height,
       addData,
       message,
       tempId,
@@ -477,5 +473,13 @@ export default {
 
 .onLine {
   margin: -16px -16px 5px;
+}
+
+.h-chatroom {
+  height: calc(100vh - 180px);
+}
+
+.h-onLine {
+  height: calc(100vh - 100px);
 }
 </style>
