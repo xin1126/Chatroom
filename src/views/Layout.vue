@@ -75,7 +75,7 @@ export default {
     const view = ref(false);
 
     watch(route, () => {
-      view.value = route.path === '/chatroom';
+      view.value = route.path !== '/';
     });
 
     watch(checked, () => {

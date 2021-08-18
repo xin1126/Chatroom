@@ -145,7 +145,7 @@ export default {
 
     const enterChatroom = () => {
       if (name.value !== '') {
-        router.push('/chatroom');
+        router.push('/hall');
       } else {
         str.value = str.value === '請輸入暱稱' ? '尚未輸入暱稱' : '請輸入暱稱';
       }

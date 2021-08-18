@@ -13,6 +13,18 @@ const routes = [
         path: '/chatroom',
         component: () => import('../views/Chatroom.vue'),
       },
+      {
+        path: '/hall',
+        component: () => import('../views/Hall.vue'),
+      },
+      {
+        path: '/public',
+        component: () => import('../views/PublicRoom.vue'),
+      },
+      {
+        path: '/room/:id',
+        component: () => import('../views/Room.vue'),
+      },
     ],
   },
 ];
