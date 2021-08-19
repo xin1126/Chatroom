@@ -3,4 +3,6 @@
 - Vite
 - Composition Api
 - Tailwind CSS
+- Firebase
+- WebSocket
 - ESlint(aribnb)
