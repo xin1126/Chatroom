@@ -35,7 +35,7 @@ export default {
     onMounted(() => {
       if (name.value) {
         firebase.value = true;
-        getRoomFirebaseData('wss://vast-hollows-31339.herokuapp.com/', false);
+        getRoomFirebaseData('wss://vast-hollows-31339.herokuapp.com/', true);
       } else {
         router.push('/');
       }

@@ -92,20 +92,57 @@
             :key="item"
           >
             房主：{{ Object.values(item).join('') }}
-            <button
-              class="
-                text-sm
-                bg-gray-700
-                hover:bg-gray-900
-                text-white
-                rounded-lg
-                ml-6
-                p-2
-              "
-              @click="enterRoom(Object.keys(item).join(''))"
-            >
-              進入房間
-            </button>
+            <div class="ml-10" v-if="change !== Object.keys(item).join('')">
+              <i
+                v-if="privateRoom.indexOf(Object.keys(item).join('')) >= 0"
+                class="fas fa-lock mr-2"
+              ></i>
+              <button
+                class="
+                  text-sm
+                  bg-gray-700
+                  hover:bg-gray-900
+                  text-white
+                  rounded-lg
+                  p-2
+                "
+                @click="
+                  enterRoom(
+                    Object.keys(item).join(''),
+                    privateRoom.indexOf(Object.keys(item).join(''))
+                  )
+                "
+              >
+                進入房間
+              </button>
+            </div>
+            <div class="ml-4" v-else>
+              <div class="flex mb-1">
+                <input
+                  class="pl-2 rounded-l-lg text-black"
+                  type="text"
+                  placeholder="請輸入密碼"
+                  v-model="privatePassword"
+                />
+                <button
+                  class="
+                    text-sm
+                    bg-gray-700
+                    hover:bg-gray-900
+                    text-white
+                    rounded-r-lg
+                    p-2
+                  "
+                  @click="enterPrivateRoom(Object.keys(item).join(''))"
+                >
+                  確認
+                </button>
+              </div>
+
+              <p v-show="warn" class="text-red-500">
+                <i class="fas fa-exclamation-triangle mr-1"></i>密碼錯誤
+              </p>
+            </div>
           </li>
         </ul>
       </div>
@@ -150,9 +187,68 @@
             rounded-lg
             p-2
           "
+          @click="privateView = true"
         >
           建立私人房間
         </button>
+      </div>
+      <div
+        v-show="privateView"
+        class="
+          absolute
+          top-0
+          left-0
+          w-full
+          h-full
+          flex
+          justify-center
+          items-center
+          bg-white/25
+        "
+      >
+        <div class="bg-gray-700 p-3 rounded-lg text-center">
+          <label for="password" class="mb-1 text-white block"
+            ><i class="fas fa-lock mr-1"></i>設定房間密碼</label
+          >
+          <input
+            class="mb-2 pl-2 rounded"
+            type="text"
+            id="password"
+            placeholder="請輸入密碼"
+            v-model="password"
+          />
+          <div>
+            <button
+              class="
+                bg-gray-900
+                dark:bg-gray-500
+                dark:hover:bg-gray-600
+                hover:bg-gray-800
+                text-white
+                rounded-lg
+                px-2
+                mr-2
+              "
+              @click="privateView = false"
+            >
+              取消
+            </button>
+            <button
+              class="
+                bg-gray-900
+                dark:bg-gray-500
+                dark:hover:bg-gray-600
+                hover:bg-gray-800
+                text-white
+                rounded-lg
+                px-2
+              "
+              @click="router.push('/private')"
+            >
+              建立房間
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -161,27 +257,64 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { name, database } from '../compositionApi/role';
+import { name, database, password } from '../compositionApi/role';
 
 export default {
   setup() {
     const router = useRouter();
     const data = ref([]);
+    const privateRoom = ref([]);
+    const change = ref('');
+    const privatePassword = ref('');
     const searchView = ref(false);
-    const enterRoom = (id) => {
-      router.push(`/room/${id}`);
+    const privateView = ref(false);
+    const warn = ref(false);
+    let privateRoomTotal;
+
+    const enterRoom = (id, status) => {
+      if (status < 0) {
+        router.push(`/room/${id}`);
+      } else {
+        change.value = id;
+      }
+      warn.value = false;
+      privatePassword.value = '';
     };
+
     const searchClosure = (e) => {
       if (e.target.nodeName === 'DIV' || e.target.nodeName === 'I') {
         searchView.value = false;
+        change.value = '';
       }
     };
+
+    const enterPrivateRoom = (id) => {
+      privateRoomTotal.forEach((item) => {
+        if (Object.keys(item).join('') === id) {
+          if (Object.values(item).join('') === privatePassword.value) {
+            router.push(`/room/${id}`);
+          } else {
+            warn.value = true;
+          }
+        }
+      });
+    };
+
     onMounted(() => {
       if (name.value) {
         database.ref('publicRoom').on('value', (snapshot) => {
-          if (!snapshot.val()) return;
+          if (!snapshot.val()) {
+            data.value = [];
+            return;
+          }
           if (Object.entries(snapshot.val()).pop()[1] !== 1) {
             data.value = Object.entries(snapshot.val()).map((item) => ({ [item[0]]: Object.keys(Object.values(item[1])[0]).join('') }));
+          }
+        });
+        database.ref('privateRoom').on('value', (snapshot) => {
+          if (snapshot.val()) {
+            privateRoom.value = Object.entries(snapshot.val()).map((item) => Object.keys(item[1])[0]);
+            privateRoomTotal = Object.values(snapshot.val());
           }
         });
       } else {
@@ -194,6 +327,13 @@ export default {
       enterRoom,
       searchView,
       searchClosure,
+      privateView,
+      password,
+      privateRoom,
+      change,
+      enterPrivateRoom,
+      privatePassword,
+      warn,
     };
   },
 };

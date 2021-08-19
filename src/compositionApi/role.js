@@ -23,6 +23,10 @@ export const imgUrl = ref('');
 
 export const checked = ref('');
 
+export const password = ref('');
+
+export const tempId = ref(JSON.parse(localStorage.getItem(name.value)) || []);
+
 export default () => {
   let numAvatar = 1;
   const getImg = () => {

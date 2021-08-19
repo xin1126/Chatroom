@@ -22,6 +22,10 @@ const routes = [
         component: () => import('../views/PublicRoom.vue'),
       },
       {
+        path: '/private',
+        component: () => import('../views/PrivateRoom.vue'),
+      },
+      {
         path: '/room/:id',
         component: () => import('../views/Room.vue'),
       },
