@@ -20,9 +20,13 @@ export const getFirebaseData = () => {
   const enterChatroom = {};
   onLineData[name.value] = imgUrl.value;
   enterChatroom[name.value] = { content: '', status: true };
-  database.ref('chatroom').push().set(enterChatroom);
-  database.ref('onLine').push().set(onLineData);
-  ws.value = new WebSocket('wss://fierce-savannah-16080.herokuapp.com/');
+  database.ref('chatroom').push().set(enterChatroom)
+    .then(() => {
+      database.ref('onLine').push().set(onLineData);
+    })
+    .then(() => {
+      ws.value = new WebSocket('wss://fierce-savannah-16080.herokuapp.com/');
+    });
   database.ref().on('value', (snapshot) => {
     data.value = Object.entries(snapshot.val().chatroom);
     if (snapshot.val().onLine) {
@@ -50,9 +54,12 @@ export const getRoomFirebaseData = (url, status) => {
   database.ref('onLinePublicRoom').once('value', (snapshot) => {
     onLineId = Object.keys(snapshot.val()).pop();
     onLineData[name.value] = imgUrl.value;
-    database.ref('onLinePublicRoom').child(onLineId).push().set(onLineData);
+    database.ref('onLinePublicRoom').child(onLineId).push().set(onLineData)
+      .then(() => {
+        ws.value = new WebSocket(url);
+      });
   });
-  ws.value = new WebSocket(url);
+
   database.ref().on('value', (snapshot) => {
     if (firebase.value) {
       data.value = Object.entries(snapshot.val().publicRoom[roomId.value]);
@@ -79,9 +86,11 @@ export const getEnterRoomFirebaseData = () => {
     onLineData[name.value] = imgUrl.value;
     database.ref('onLinePublicRoom').child(onLineId).push().set(onLineData);
     targetRoom[routeId.value] = onLineId;
-    database.ref('targetRoom').push().set(targetRoom);
+    database.ref('targetRoom').push().set(targetRoom)
+      .then(() => {
+        ws.value = new WebSocket('wss://young-coast-22846.herokuapp.com/');
+      });
   });
-  ws.value = new WebSocket('wss://young-coast-22846.herokuapp.com/');
   database.ref().on('value', (snapshot) => {
     if (firebase.value) {
       data.value = Object.entries(snapshot.val().publicRoom[routeId.value]);
