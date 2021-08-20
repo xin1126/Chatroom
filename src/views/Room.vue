@@ -44,6 +44,7 @@ export default {
     });
 
     onUnmounted(() => {
+      firebase.value = false;
       ws.value?.close();
     });
 
