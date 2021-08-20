@@ -248,7 +248,9 @@ export default {
 
     watch(data, () => {
       setTimeout(() => {
-        scroll.value.scrollTop = scroll.value?.scrollHeight + 2000;
+        if (scroll.value?.scrollTop !== '' && scroll.value?.scrollHeight) {
+          scroll.value.scrollTop = scroll.value.scrollHeight + 2000;
+        }
       }, 500);
     });
 

@@ -288,7 +288,7 @@ export default {
       setTimeout(() => {
         loading.value = '';
         router.push('/chatroom');
-      }, 1000);
+      }, 1500);
     };
 
     const enterRoom = (id, status) => {
@@ -297,7 +297,7 @@ export default {
         setTimeout(() => {
           loading.value = '';
           router.push(`/room/${id}`);
-        }, 1000);
+        }, 1500);
       } else {
         change.value = id;
       }
@@ -317,7 +317,7 @@ export default {
       setTimeout(() => {
         loading.value = '';
         router.push('/private');
-      }, 1000);
+      }, 1500);
     };
 
     const createPublicRoom = () => {
@@ -325,7 +325,7 @@ export default {
       setTimeout(() => {
         loading.value = '';
         router.push('/public');
-      }, 1000);
+      }, 1500);
     };
 
     const enterPrivateRoom = (id) => {
@@ -337,7 +337,7 @@ export default {
             setTimeout(() => {
               loading.value = '';
               router.push(`/room/${id}`);
-            }, 1000);
+            }, 1500);
           } else {
             warn.value = true;
           }
