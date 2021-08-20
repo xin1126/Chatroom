@@ -39,7 +39,13 @@ export default {
     });
 
     onUnmounted(() => {
-      ws.value?.close();
+      if (ws.value.readyState === 1) {
+        ws.value?.close();
+      } else {
+        setTimeout(() => {
+          ws.value?.close();
+        }, 1500);
+      }
     });
 
     return {

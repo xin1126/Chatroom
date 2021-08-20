@@ -61,10 +61,10 @@ export const getRoomFirebaseData = (url, status) => {
   });
 
   database.ref().on('value', (snapshot) => {
-    if (firebase.value) {
+    if (firebase.value && snapshot.val().publicRoom[roomId.value]) {
       data.value = Object.entries(snapshot.val().publicRoom[roomId.value]);
-      if (snapshot.val().onLinePublicRoom[onLineId]) {
-        onLine.value = Object.entries(snapshot.val().onLinePublicRoom[onLineId]).map((item) => item[1]) || {};
+      if (snapshot.val().onLinePublicRoom?.[onLineId]) {
+        onLine.value = Object.entries(snapshot.val().onLinePublicRoom[onLineId]).map((item) => item[1]);
       }
     }
   });
@@ -92,9 +92,9 @@ export const getEnterRoomFirebaseData = () => {
       });
   });
   database.ref().on('value', (snapshot) => {
-    if (firebase.value) {
+    if (firebase.value && snapshot.val().publicRoom[roomId.value]) {
       data.value = Object.entries(snapshot.val().publicRoom[routeId.value]);
-      if (snapshot.val().onLinePublicRoom[onLineId]) {
+      if (snapshot.val().onLinePublicRoom?.[onLineId]) {
         onLine.value = Object.entries(snapshot.val().onLinePublicRoom[onLineId]).map((item) => item[1]) || {};
       }
     }
