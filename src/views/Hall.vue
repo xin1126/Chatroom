@@ -8,6 +8,7 @@
           alt=""
         />
         <button
+          v-if="loading !== 1"
           type="button"
           class="
             text-lg
@@ -20,10 +21,11 @@
             rounded-lg
             p-2
           "
-          @click="router.push('/chatroom')"
+          @click="chatroom"
         >
           公開頻道
         </button>
+        <i v-else class="fas fa-spinner fa-spin fa-2x mt-3"></i>
       </div>
       <div class="flex flex-col items-center mr-3">
         <img class="w-28 h-32 mb-2" src="@/assets/img/search.png" alt="" />
@@ -98,6 +100,7 @@
                 class="fas fa-lock mr-2"
               ></i>
               <button
+                v-if="loading !== Object.keys(item).join('')"
                 class="
                   text-sm
                   bg-gray-700
@@ -115,11 +118,15 @@
               >
                 進入房間
               </button>
+              <i v-else class="fas fa-spinner fa-spin fa-2x mt-3"></i>
             </div>
             <div class="ml-4" v-else>
-              <div class="flex mb-1">
+              <div
+                v-if="loading !== Object.keys(item).join('')"
+                class="flex justify-end mb-1"
+              >
                 <input
-                  class="pl-2 rounded-l-lg text-black"
+                  class="pl-2 rounded-l-lg text-black w-3/4"
                   type="text"
                   placeholder="請輸入密碼"
                   v-model="privatePassword"
@@ -138,7 +145,7 @@
                   確認
                 </button>
               </div>
-
+              <i v-else class="fas fa-spinner fa-spin fa-2x mt-3"></i>
               <p v-show="warn" class="text-red-500">
                 <i class="fas fa-exclamation-triangle mr-1"></i>密碼錯誤
               </p>
@@ -151,6 +158,7 @@
       <div class="flex flex-col items-center sm:mr-16 mr-4">
         <img class="max-w-40 h-32 mb-2" src="@/assets/img/party.png" alt="" />
         <button
+          v-if="loading !== 3"
           type="button"
           class="
             text-lg
@@ -163,10 +171,11 @@
             rounded-lg
             p-2
           "
-          @click="router.push('/public')"
+          @click="createPublicRoom"
         >
           建立公開房間
         </button>
+        <i v-else class="fas fa-spinner fa-spin fa-2x mt-3"></i>
       </div>
       <div class="flex flex-col items-center">
         <img
@@ -234,6 +243,7 @@
               取消
             </button>
             <button
+              v-if="loading !== 2"
               class="
                 bg-gray-900
                 dark:bg-gray-500
@@ -243,10 +253,11 @@
                 rounded-lg
                 px-2
               "
-              @click="router.push('/private')"
+              @click="createPrivateRoom"
             >
               建立房間
             </button>
+            <i v-else class="fas fa-spinner fa-spin fa-2x"></i>
           </div>
         </div>
       </div>
@@ -266,14 +277,27 @@ export default {
     const privateRoom = ref([]);
     const change = ref('');
     const privatePassword = ref('');
+    const loading = ref('');
     const searchView = ref(false);
     const privateView = ref(false);
     const warn = ref(false);
     let privateRoomTotal;
 
+    const chatroom = () => {
+      loading.value = 1;
+      setTimeout(() => {
+        loading.value = '';
+        router.push('/chatroom');
+      }, 1000);
+    };
+
     const enterRoom = (id, status) => {
       if (status < 0) {
-        router.push(`/room/${id}`);
+        loading.value = id;
+        setTimeout(() => {
+          loading.value = '';
+          router.push(`/room/${id}`);
+        }, 1000);
       } else {
         change.value = id;
       }
@@ -288,11 +312,32 @@ export default {
       }
     };
 
+    const createPrivateRoom = () => {
+      loading.value = 2;
+      setTimeout(() => {
+        loading.value = '';
+        router.push('/private');
+      }, 1000);
+    };
+
+    const createPublicRoom = () => {
+      loading.value = 3;
+      setTimeout(() => {
+        loading.value = '';
+        router.push('/public');
+      }, 1000);
+    };
+
     const enterPrivateRoom = (id) => {
       privateRoomTotal.forEach((item) => {
         if (Object.keys(item).join('') === id) {
           if (Object.values(item).join('') === privatePassword.value) {
-            router.push(`/room/${id}`);
+            warn.value = false;
+            loading.value = id;
+            setTimeout(() => {
+              loading.value = '';
+              router.push(`/room/${id}`);
+            }, 1000);
           } else {
             warn.value = true;
           }
@@ -324,6 +369,7 @@ export default {
     return {
       router,
       data,
+      chatroom,
       enterRoom,
       searchView,
       searchClosure,
@@ -331,9 +377,12 @@ export default {
       password,
       privateRoom,
       change,
+      createPublicRoom,
+      createPrivateRoom,
       enterPrivateRoom,
       privatePassword,
       warn,
+      loading,
     };
   },
 };
