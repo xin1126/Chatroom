@@ -92,7 +92,7 @@ export const getEnterRoomFirebaseData = () => {
       });
   });
   database.ref().on('value', (snapshot) => {
-    if (firebase.value && snapshot.val().publicRoom[roomId.value]) {
+    if (firebase.value && snapshot.val().publicRoom[routeId.value]) {
       data.value = Object.entries(snapshot.val().publicRoom[routeId.value]);
       if (snapshot.val().onLinePublicRoom?.[onLineId]) {
         onLine.value = Object.entries(snapshot.val().onLinePublicRoom[onLineId]).map((item) => item[1]) || {};
