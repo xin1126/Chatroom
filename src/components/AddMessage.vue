@@ -30,17 +30,17 @@
 
 <script>
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
 import {
   name, imgUrl, database, tempId,
 } from '../compositionApi/role';
-import { data, roomId, routeId } from '../compositionApi/firebaseData';
+import {
+  data, roomId, routeId, ws,
+} from '../compositionApi/firebaseData';
 
 export default {
   setup() {
     const str = ref('請輸入留言');
     const message = ref('');
-    const route = useRoute();
 
     const addData = () => {
       if (message.value !== '') {
@@ -52,9 +52,9 @@ export default {
           edit: false,
         };
         message.value = '';
-        if (route.path === '/chatroom') {
+        if (ws.value.url.indexOf('fierce-savannah') >= 0) {
           database.ref('chatroom').push().set(addMessage);
-        } else if (route.path === '/public' || route.path === '/private') {
+        } else if (ws.value.url.indexOf('vast-hollows') >= 0) {
           database.ref('publicRoom').child(roomId.value).push().set(addMessage);
         } else {
           database.ref('publicRoom').child(routeId.value).push().set(addMessage);

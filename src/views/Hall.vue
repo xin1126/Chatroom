@@ -266,9 +266,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import {
+  ref, onMounted, watch,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { name, database, password } from '../compositionApi/role';
+import {
+  wsStatus, firebase, getFirebaseData, getRoomFirebaseData, getEnterRoomFirebaseData, routeId,
+} from '../compositionApi/firebaseData';
 
 export default {
   setup() {
@@ -282,12 +287,14 @@ export default {
     const privateView = ref(false);
     const warn = ref(false);
     let privateRoomTotal;
+    let page;
 
     const chatroom = () => {
       loading.value = 1;
       setTimeout(() => {
-        loading.value = '';
-        router.push('/chatroom');
+        firebase.value = true;
+        getFirebaseData();
+        page = 'room';
       }, 1500);
     };
 
@@ -295,8 +302,10 @@ export default {
       if (status < 0) {
         loading.value = id;
         setTimeout(() => {
-          loading.value = '';
-          router.push(`/room/${id}`);
+          routeId.value = id;
+          firebase.value = true;
+          getEnterRoomFirebaseData();
+          page = `room/${id}`;
         }, 1500);
       } else {
         change.value = id;
@@ -315,16 +324,18 @@ export default {
     const createPrivateRoom = () => {
       loading.value = 2;
       setTimeout(() => {
-        loading.value = '';
-        router.push('/private');
+        firebase.value = true;
+        getRoomFirebaseData('wss://vast-hollows-31339.herokuapp.com/', true);
+        page = 'room';
       }, 1500);
     };
 
     const createPublicRoom = () => {
       loading.value = 3;
       setTimeout(() => {
-        loading.value = '';
-        router.push('/public');
+        firebase.value = true;
+        getRoomFirebaseData('wss://vast-hollows-31339.herokuapp.com/', false);
+        page = 'room';
       }, 1500);
     };
 
@@ -335,8 +346,10 @@ export default {
             warn.value = false;
             loading.value = id;
             setTimeout(() => {
-              loading.value = '';
-              router.push(`/room/${id}`);
+              routeId.value = id;
+              firebase.value = true;
+              getEnterRoomFirebaseData();
+              page = `room/${id}`;
             }, 1500);
           } else {
             warn.value = true;
@@ -344,6 +357,12 @@ export default {
         }
       });
     };
+
+    watch(wsStatus, () => {
+      if (wsStatus.value === 1) {
+        router.push(`/${page}`);
+      }
+    });
 
     onMounted(() => {
       if (name.value) {

@@ -11,9 +11,20 @@ export const roomId = ref('');
 
 export const ws = ref('');
 
+export const wsStatus = ref('');
+
 export const routeId = ref('');
 
 export const firebase = ref(false);
+
+const setIntervalWs = () => {
+  const wsStatusInquire = setInterval(() => {
+    wsStatus.value = ws.value.readyState;
+    if (wsStatus.value) {
+      clearInterval(wsStatusInquire);
+    }
+  }, 500);
+};
 
 export const getFirebaseData = () => {
   const onLineData = {};
@@ -26,6 +37,7 @@ export const getFirebaseData = () => {
     })
     .then(() => {
       ws.value = new WebSocket('wss://fierce-savannah-16080.herokuapp.com/');
+      setIntervalWs();
     });
   database.ref().on('value', (snapshot) => {
     data.value = Object.entries(snapshot.val().chatroom);
@@ -57,10 +69,12 @@ export const getRoomFirebaseData = (url, status) => {
     database.ref('onLinePublicRoom').child(onLineId).push().set(onLineData)
       .then(() => {
         ws.value = new WebSocket(url);
+        setIntervalWs();
       });
   });
 
   database.ref().on('value', (snapshot) => {
+    if (snapshot.val()?.publicRoom === undefined) return;
     if (firebase.value && snapshot.val().publicRoom[roomId.value]) {
       data.value = Object.entries(snapshot.val().publicRoom[roomId.value]);
       if (snapshot.val().onLinePublicRoom?.[onLineId]) {
@@ -89,9 +103,11 @@ export const getEnterRoomFirebaseData = () => {
     database.ref('targetRoom').push().set(targetRoom)
       .then(() => {
         ws.value = new WebSocket('wss://young-coast-22846.herokuapp.com/');
+        setIntervalWs();
       });
   });
   database.ref().on('value', (snapshot) => {
+    if (snapshot.val()?.publicRoom === undefined) return;
     if (firebase.value && snapshot.val().publicRoom[routeId.value]) {
       data.value = Object.entries(snapshot.val().publicRoom[routeId.value]);
       if (snapshot.val().onLinePublicRoom?.[onLineId]) {

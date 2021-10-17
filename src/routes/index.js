@@ -10,20 +10,12 @@ const routes = [
         component: () => import('../views/Home.vue'),
       },
       {
-        path: '/chatroom',
-        component: () => import('../views/Chatroom.vue'),
-      },
-      {
         path: '/hall',
         component: () => import('../views/Hall.vue'),
       },
       {
-        path: '/public',
-        component: () => import('../views/PublicRoom.vue'),
-      },
-      {
-        path: '/private',
-        component: () => import('../views/PrivateRoom.vue'),
+        path: '/room',
+        component: () => import('../views/CreateRoom.vue'),
       },
       {
         path: '/room/:id',

@@ -190,12 +190,15 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import {
+  ref, watch, onMounted, nextTick,
+} from 'vue';
 import {
   name, imgUrl, checked, database, tempId,
 } from '../compositionApi/role';
-import { data, roomId, routeId } from '../compositionApi/firebaseData';
+import {
+  data, roomId, routeId, ws,
+} from '../compositionApi/firebaseData';
 
 export default {
   setup() {
@@ -203,7 +206,6 @@ export default {
     const editMessage = ref('');
     const scroll = ref('');
     const verify = ref(false);
-    const route = useRoute();
 
     const editData = (id, strMessage, status) => {
       if (status) {
@@ -220,9 +222,9 @@ export default {
           date: new Date().getTime(),
           edit: true,
         };
-        if (route.path === '/chatroom') {
+        if (ws.value.url.indexOf('fierce-savannah') >= 0) {
           database.ref('chatroom').child(id).set(newData);
-        } else if (route.path === '/public' || route.path === '/private') {
+        } else if (ws.value.url.indexOf('vast-hollows') >= 0) {
           database.ref('publicRoom').child(roomId.value).child(id).set(newData);
         } else {
           database.ref('publicRoom').child(routeId.value).child(id).set(newData);
@@ -237,21 +239,24 @@ export default {
       newData[name.value] = {
         content: '',
       };
-      if (route.path === '/chatroom') {
+      if (ws.value.url.indexOf('fierce-savannah') >= 0) {
         database.ref('chatroom').child(id).set(newData);
-      } else if (route.path === '/public' || route.path === '/private') {
+      } else if (ws.value.url.indexOf('vast-hollows') >= 0) {
         database.ref('publicRoom').child(roomId.value).child(id).set(newData);
       } else {
         database.ref('publicRoom').child(routeId.value).child(id).set(newData);
       }
     };
 
-    watch(data, () => {
+    watch(data, async () => {
+      await nextTick();
       setTimeout(() => {
-        if (scroll.value?.scrollTop !== '' && scroll.value?.scrollHeight) {
-          scroll.value.scrollTop = scroll.value.scrollHeight + 2000;
-        }
+        scroll.value.scrollTop = scroll.value.scrollHeight + 2000;
       }, 500);
+    });
+
+    onMounted(() => {
+      scroll.value.scrollTop = scroll.value.scrollHeight;
     });
 
     return {

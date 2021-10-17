@@ -21,36 +21,25 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { name } from '../compositionApi/role';
 import {
-  data, firebase, getEnterRoomFirebaseData, ws, routeId,
+  data, firebase, ws,
 } from '../compositionApi/firebaseData';
 
 export default {
   setup() {
     const router = useRouter();
-    const route = useRoute();
 
-    onMounted(() => {
-      if (name.value) {
-        routeId.value = route.params.id;
-        firebase.value = true;
-        getEnterRoomFirebaseData();
-      } else {
-        router.push('/');
-      }
-    });
+    if (!name.value) {
+      router.push('/');
+    }
 
     onUnmounted(() => {
       firebase.value = false;
       if (ws.value.readyState === 1) {
-        ws.value?.close();
-      } else {
-        setTimeout(() => {
-          ws.value?.close();
-        }, 1000);
+        ws.value.close();
       }
     });
 

@@ -131,7 +131,9 @@
 <script>
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import role, { gender, name, imgUrl } from '../compositionApi/role';
+import role, {
+  gender, name, imgUrl, database,
+} from '../compositionApi/role';
 
 export default {
   setup() {
@@ -145,6 +147,10 @@ export default {
 
     const enterChatroom = () => {
       if (name.value !== '') {
+        database.ref('loginUser').push().set({
+          name: name.value,
+          date: new Date().toLocaleString(),
+        });
         router.push('/hall');
       } else {
         str.value = str.value === '請輸入暱稱' ? '尚未輸入暱稱' : '請輸入暱稱';
